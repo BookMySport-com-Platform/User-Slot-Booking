@@ -2,6 +2,7 @@ package com.bookmysport.userslotbooking.Ananda.Services;
 
 import java.sql.Date;
 import java.util.UUID;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,11 @@ public class BookSlotService {
     @Autowired
     private ResponseMessage responseMessage;
 
-    public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,UUID sportId) {
+    public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
+            UUID sportId) {
         try {
-            BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId,dateOfBooking, startTime, stopTime);
+            BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId, dateOfBooking, startTime,
+                    stopTime);
             if (userBooking == null) {
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot Empty");
@@ -39,7 +42,8 @@ public class BookSlotService {
             }
         } catch (Exception e) {
             responseMessage.setSuccess(false);
-            responseMessage.setMessage("Internal Server Error inside BookSlotServce.java Method:checkSlot " + e.getMessage());
+            responseMessage
+                    .setMessage("Internal Server Error inside BookSlotServce.java Method:checkSlot " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
         }
     }
@@ -49,7 +53,7 @@ public class BookSlotService {
         try {
             ResponseEntity<ResponseMessage> messageFromCheckSlot = checkSlot(bookSlotSPModelReq.getSpId(),
                     bookSlotSPModelReq.getDateOfBooking(), bookSlotSPModelReq.getStartTime(),
-                    bookSlotSPModelReq.getStopTime(),bookSlotSPModelReq.getSportId());
+                    bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId());
             if (messageFromCheckSlot.getBody().getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
@@ -77,9 +81,28 @@ public class BookSlotService {
 
         } catch (Exception e) {
             responseMessage.setSuccess(false);
-            responseMessage.setMessage("Internal Server Error inside BookSlotServce.java Method: userBookSLotService) " + e.getMessage());
+            responseMessage.setMessage(
+                    "Internal Server Error inside BookSlotServce.java Method: userBookSLotService) " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
         }
+    }
 
+    public ResponseEntity<Object> getSlotForAnUserService(String token,String role) {
+        try {
+            List<BookSlotSPModel> slots = bookSlotRepo.findByUserId(UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage()));
+            if (slots.isEmpty()) {
+                responseMessage.setSuccess(false);
+                responseMessage.setMessage("No Slots exits with this userId");
+                return ResponseEntity.badRequest().body(responseMessage);
+            } else {
+                return ResponseEntity.ok().body(slots);
+            }
+        } catch (Exception e) {
+            responseMessage.setSuccess(false);
+            responseMessage.setMessage(
+                    "Internal Server Error inside BookSlotServce.java Method: getSlotForAnUserService) "
+                            + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
+        }
     }
 }
