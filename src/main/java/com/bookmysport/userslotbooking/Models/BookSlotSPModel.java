@@ -15,14 +15,14 @@ import lombok.Data;
 @Data
 @Table(name = "book_slot_details")
 public class BookSlotSPModel {
-    
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID slotId;
 
     private UUID spId;
-    
+
     private UUID userId;
 
     private UUID sportId;
@@ -33,4 +33,5 @@ public class BookSlotSPModel {
 
     private int stopTime;
 
+    private int courtNumber;
 }
