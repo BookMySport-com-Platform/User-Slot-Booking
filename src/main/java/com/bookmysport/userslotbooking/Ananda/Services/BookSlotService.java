@@ -27,10 +27,10 @@ public class BookSlotService {
     private ResponseMessage responseMessage;
 
     public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
-            UUID sportId) {
+            UUID sportId,int courtNumber) {
         try {
             BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId, dateOfBooking, startTime,
-                    stopTime);
+                    stopTime,courtNumber);
             if (userBooking == null) {
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot Empty");
@@ -53,7 +53,7 @@ public class BookSlotService {
         try {
             ResponseEntity<ResponseMessage> messageFromCheckSlot = checkSlot(bookSlotSPModelReq.getSpId(),
                     bookSlotSPModelReq.getDateOfBooking(), bookSlotSPModelReq.getStartTime(),
-                    bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId());
+                    bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId(),bookSlotSPModelReq.getCourtNumber());
             if (messageFromCheckSlot.getBody().getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
@@ -68,6 +68,8 @@ public class BookSlotService {
                 bookSlotSPModel.setStartTime(bookSlotSPModelReq.getStartTime());
 
                 bookSlotSPModel.setStopTime(bookSlotSPModelReq.getStopTime());
+
+                bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());
 
                 bookSlotRepo.save(bookSlotSPModel);
 
