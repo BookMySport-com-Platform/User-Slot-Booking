@@ -87,9 +87,10 @@ public class BookSlotService {
         }
     }
 
-    public ResponseEntity<Object> getSlotForAnUserService(String token,String role) {
+    public ResponseEntity<Object> getSlotForAnUserService(String token, String role) {
         try {
-            List<BookSlotSPModel> slots = bookSlotRepo.findByUserId(UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage()));
+            List<BookSlotSPModel> slots = bookSlotRepo.findByUserId(
+                    UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage()));
             if (slots.isEmpty()) {
                 responseMessage.setSuccess(false);
                 responseMessage.setMessage("No Slots exits with this userId");
