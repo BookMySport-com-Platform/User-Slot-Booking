@@ -1,16 +1,13 @@
 package com.bookmysport.userslotbooking.Repository;
-
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
-
 import jakarta.transaction.Transactional;
 
 @Repository
@@ -23,4 +20,6 @@ public interface BookSlotRepo extends JpaRepository<BookSlotSPModel, UUID> {
             @Param("stopTime") int stopTime, @Param("courtNumber") int courtNumber);
 
     List<BookSlotSPModel> findByUserId(UUID userId);
+    List<Optional> findByspId(UUID spId);
+
 }
