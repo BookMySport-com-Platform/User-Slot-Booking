@@ -1,2 +1,1 @@
 # User Slot Booking Service
-* 
