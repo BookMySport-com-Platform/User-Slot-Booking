@@ -34,4 +34,6 @@ public class BookSlotSPModel {
     private int stopTime;
 
     private int courtNumber;
+
+    private int priceToBePaid;
 }

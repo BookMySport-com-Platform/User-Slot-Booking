@@ -10,9 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.bookmysport.userslotbooking.MiddleWares.GetSPDetailsMW;
+import com.bookmysport.userslotbooking.MiddleWares.GetSportBySportIDAndSpid;
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
 import com.bookmysport.userslotbooking.Repository.BookSlotRepo;
+
 
 @Service
 public class BookSlotService {
@@ -26,11 +28,14 @@ public class BookSlotService {
     @Autowired
     private ResponseMessage responseMessage;
 
+    @Autowired
+    private GetSportBySportIDAndSpid getSportBySportIDAndSpid;
+
     public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
-            UUID sportId,int courtNumber) {
+            UUID sportId, int courtNumber) {
         try {
             BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId, dateOfBooking, startTime,
-                    stopTime,courtNumber);
+                    stopTime, courtNumber);
             if (userBooking == null) {
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot Empty");
@@ -53,7 +58,8 @@ public class BookSlotService {
         try {
             ResponseEntity<ResponseMessage> messageFromCheckSlot = checkSlot(bookSlotSPModelReq.getSpId(),
                     bookSlotSPModelReq.getDateOfBooking(), bookSlotSPModelReq.getStartTime(),
-                    bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId(),bookSlotSPModelReq.getCourtNumber());
+                    bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId(),
+                    bookSlotSPModelReq.getCourtNumber());
             if (messageFromCheckSlot.getBody().getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
@@ -68,6 +74,12 @@ public class BookSlotService {
                 bookSlotSPModel.setStartTime(bookSlotSPModelReq.getStartTime());
 
                 bookSlotSPModel.setStopTime(bookSlotSPModelReq.getStopTime());
+
+                int stopTimeMstartTime = bookSlotSPModelReq.getStopTime() - bookSlotSPModelReq.getStartTime();
+
+                int price=getSportBySportIDAndSpid.getSportAndSpDetailsService(token, role, bookSlotSPModelReq.getSportId().toString());
+                
+                bookSlotSPModel.setPriceToBePaid(price * stopTimeMstartTime);
 
                 bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());
 
@@ -84,7 +96,7 @@ public class BookSlotService {
         } catch (Exception e) {
             responseMessage.setSuccess(false);
             responseMessage.setMessage(
-                    "Internal Server Error inside BookSlotServce.java Method: userBookSLotService) " + e.getMessage());
+                    "Internal Server Error inside BookSlotServce.java Method: userBookSLotService " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseMessage);
         }
     }
