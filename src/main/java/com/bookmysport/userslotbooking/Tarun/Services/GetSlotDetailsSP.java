@@ -28,7 +28,7 @@ public class GetSlotDetailsSP {
 
     public ResponseEntity<Object> getAllSlotIdsService(String token, String role) {
         try {
-            UUID spId = UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage());
+            UUID spId = UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("id").toString());
             List<BookSlotSPModel> serviceProviderSlots = bookSlotRepo.findByspId(spId);
             return ResponseEntity.ok().body(serviceProviderSlots);
 

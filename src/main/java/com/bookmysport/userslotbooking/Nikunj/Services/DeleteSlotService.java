@@ -59,7 +59,7 @@ public class DeleteSlotService {
                 BookSlotSPModel slotToDelete = optionalSlotToDelete.get();
 
                 // Ensure that the user making the request has the necessary permissions
-                UUID userIdFromToken = UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage());
+                UUID userIdFromToken = UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("id").toString());
                 if (userIdFromToken.equals(slotToDelete.getUserId())) {
                     // Delete the slot
                     bookSlotRepo.delete(slotToDelete);

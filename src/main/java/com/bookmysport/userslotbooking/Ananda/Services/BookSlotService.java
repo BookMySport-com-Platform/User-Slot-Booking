@@ -3,6 +3,7 @@ package com.bookmysport.userslotbooking.Ananda.Services;
 import java.sql.Date;
 import java.util.UUID;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,9 @@ public class BookSlotService {
 
     @Autowired
     private GetSportBySportIDAndSpid getSportBySportIDAndSpid;
+
+    @Autowired
+    private PdfEmailService pdfEmailService;
 
     public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
             UUID sportId, int courtNumber) {
@@ -63,9 +67,10 @@ public class BookSlotService {
             if (messageFromCheckSlot.getBody().getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
+                Map<String, Object> userDetails=getSPDetailsMW.getSPDetailsByToken(token, role).getBody();
                 bookSlotSPModel
                         .setUserId(UUID
-                                .fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage()));
+                                .fromString(userDetails.get("id").toString()));
 
                 bookSlotSPModel.setSportId(bookSlotSPModelReq.getSportId());
 
@@ -84,6 +89,8 @@ public class BookSlotService {
                 bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());
 
                 bookSlotRepo.save(bookSlotSPModel);
+
+                pdfEmailService.generatePdfAndSendEmail(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("email").toString(),token,role);
 
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot booked.");
@@ -104,7 +111,7 @@ public class BookSlotService {
     public ResponseEntity<Object> getSlotForAnUserService(String token, String role) {
         try {
             List<BookSlotSPModel> slots = bookSlotRepo.findByUserId(
-                    UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().getMessage()));
+                    UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("id").toString()));
             if (slots.isEmpty()) {
                 responseMessage.setSuccess(false);
                 responseMessage.setMessage("No Slots exits with this userId");
