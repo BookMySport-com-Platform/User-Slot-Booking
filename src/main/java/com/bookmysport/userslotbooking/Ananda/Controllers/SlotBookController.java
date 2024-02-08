@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bookmysport.userslotbooking.Ananda.Services.BookSlotService;
+// import com.bookmysport.userslotbooking.Ananda.Services.PdfEmailService;
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
 
@@ -19,6 +20,9 @@ public class SlotBookController {
 
     @Autowired
     private BookSlotService bookSlotService;
+
+    // @Autowired
+    // private PdfEmailService pdfEmailService;
 
     @PostMapping("bookslot")
     public ResponseEntity<ResponseMessage> bookSlotByUser(@RequestBody BookSlotSPModel bookSlotSPModel,
@@ -30,5 +34,11 @@ public class SlotBookController {
     public ResponseEntity<Object> getUserSlots(@RequestHeader String token, @RequestHeader String role) {
         return bookSlotService.getSlotForAnUserService(token, role);
     }
+
+    // @PostMapping("email")
+    // public void sendEmail(@RequestHeader String email) throws Exception
+    // {
+    //     pdfEmailService.generatePdfAndSendEmail(email);
+    // }
 
 }
