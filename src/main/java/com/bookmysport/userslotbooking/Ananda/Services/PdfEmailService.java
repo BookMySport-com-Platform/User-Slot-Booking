@@ -11,8 +11,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.bookmysport.userslotbooking.MiddleWares.GetSPDetailsMW;
+import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
+import com.bookmysport.userslotbooking.Repository.BookSlotRepo;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
@@ -33,6 +38,9 @@ public class PdfEmailService {
 
     @Autowired
     private GetSPDetailsMW getSPDetailsMW;
+
+    @Autowired
+    private BookSlotRepo bookSlotRepo;
 
     public void generatePdfAndSendEmail(String recipientEmail,String token,String role) throws Exception {
         try {
@@ -60,8 +68,14 @@ public class PdfEmailService {
                 htmlContent.append(line);
             }
 
-            String dynamicValue = getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("userName").toString();
-            String htmlWithDynamicValue = htmlContent.toString().replace("$username$", dynamicValue);
+            Map<String,Object> userDetails=getSPDetailsMW.getSPDetailsByToken(token, role).getBody();
+
+            String userName = userDetails.get("userName").toString();
+            String userId=userDetails.get("id").toString();
+            List<BookSlotSPModel> totalPriceObject=bookSlotRepo.findByUserId(UUID.fromString(userId));
+
+            String htmlWithDynamicValue = htmlContent.toString().replace("$username$", userName)
+            .replace("$totalPrice$", String.valueOf(totalPriceObject.get(0).getPriceToBePaid()));
 
             htmlWorker.parse(new StringReader(htmlWithDynamicValue));          
         }
