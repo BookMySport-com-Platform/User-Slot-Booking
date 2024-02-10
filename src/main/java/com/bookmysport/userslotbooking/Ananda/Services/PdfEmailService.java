@@ -38,11 +38,10 @@ public class PdfEmailService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            export("C:\\Users\\anand_tert\\Documents\\BookMyShow Repos\\User-Slot-Booking\\index.html", outputStream,token,role);
+            export("E:\\THIS\\Java Programs\\BookMySport\\User-Slot-Booking\\index.html", outputStream,token,role);
 
             sendEmailWithAttachment(recipientEmail, outputStream.toByteArray());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }

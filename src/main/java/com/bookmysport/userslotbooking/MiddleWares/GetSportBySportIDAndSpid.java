@@ -37,11 +37,7 @@ public class GetSportBySportIDAndSpid {
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
                     });
             Map<String, Object> sportAndSpDetails = sportAndSpDetailsMono.block();
-            System.out.println("This");
-            System.out.println(sportAndSpDetails);
             if (sportAndSpDetails != null) {
-                    System.out.println("Inside middleware");
-                    System.out.println(sportAndSpDetails.get("pricePerHour"));
                     return (Integer)sportAndSpDetails.get("pricePerHour");
             } else {
                 responseMessage.setSuccess(false);
