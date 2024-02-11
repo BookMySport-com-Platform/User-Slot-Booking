@@ -14,10 +14,15 @@ import jakarta.transaction.Transactional;
 public interface BookSlotRepo extends JpaRepository<BookSlotSPModel, UUID> {
 
     @Transactional
-    @Query(value = "SELECT * FROM book_slot_details WHERE sp_id = :spId AND date_of_booking = :dateOfBooking AND start_time = :startTime AND stop_time = :stopTime AND sport_id= :sportId AND court_number= :courtNumber", nativeQuery = true)
+    @Query(value = "SELECT * FROM book_slot_details WHERE sp_id = :spId AND sport_id= :sportId AND date_of_booking = :dateOfBooking AND court_number= :courtNumber AND start_time = :startTime OR stop_time = :stopTime", nativeQuery = true)
     BookSlotSPModel findSlotExists(@Param("spId") UUID spId, @Param("sportId") UUID sportId,
             @Param("dateOfBooking") Date dateOfBooking, @Param("startTime") int startTime,
             @Param("stopTime") int stopTime, @Param("courtNumber") int courtNumber);
+    // @Transactional
+    // @Query(value = "SELECT * FROM book_slot_details WHERE sp_id = :spId AND date_of_booking = :dateOfBooking AND start_time = :startTime AND stop_time = :stopTime AND sport_id= :sportId AND court_number= :courtNumber", nativeQuery = true)
+    // BookSlotSPModel findSlotExists(@Param("spId") UUID spId, @Param("sportId") UUID sportId,
+    //         @Param("dateOfBooking") Date dateOfBooking, @Param("startTime") int startTime,
+    //         @Param("stopTime") int stopTime, @Param("courtNumber") int courtNumber);
 
     List<BookSlotSPModel> findByUserId(UUID userId);
 

@@ -5,10 +5,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.bookmysport.userslotbooking.Models.ResponseMessage;
+import com.bookmysport.userslotbooking.Models.IntResponseModel;
 
 import reactor.core.publisher.Mono;
 
@@ -21,16 +23,15 @@ public class GetSportBySportIDAndSpid {
     String getsportbyspidandsportidURL;
 
     @Autowired
-    private ResponseMessage responseMessage;
+    private IntResponseModel intResponseMessage;
 
-    public int getSportAndSpDetailsService(String token, String role, String sportId) {
+    public ResponseEntity<IntResponseModel> getSportAndSpDetailsService(String spId, String sportId) {
         try {
             Mono<Map<String, Object>> sportAndSpDetailsMono = webClient.get()
                     .uri(getsportbyspidandsportidURL)
                     .headers(headers -> {
                         headers.set("Content-Type", "application/json");
-                        headers.set("token", token);
-                        headers.set("role", role);
+                        headers.set("spId", spId);
                         headers.set("sportId", sportId);
                     })
                     .retrieve()
@@ -38,16 +39,18 @@ public class GetSportBySportIDAndSpid {
                     });
             Map<String, Object> sportAndSpDetails = sportAndSpDetailsMono.block();
             if (sportAndSpDetails != null) {
-                    return (Integer)sportAndSpDetails.get("pricePerHour");
+                intResponseMessage.setSuccess(true);
+                intResponseMessage.setNumber((Integer) sportAndSpDetails.get("pricePerHour"));
+                return ResponseEntity.ok().body(intResponseMessage);
             } else {
-                responseMessage.setSuccess(false);
-                responseMessage.setMessage("No Sport exists with this spId or SportId");
-                return 0;
+                intResponseMessage.setSuccess(false);
+                intResponseMessage.setMessage("No Sport exists with this spId or SportId");
+                return ResponseEntity.badRequest().body(intResponseMessage);
             }
         } catch (Exception e) {
-            responseMessage.setSuccess(false);
-            responseMessage.setMessage("Internal Server Error in GetSportBySportIDAndSpid. Method: getSportAndSpDetailsService. Error message: " + e.getMessage());
-            return 0;
+            intResponseMessage.setSuccess(false);
+            intResponseMessage.setMessage("Internal Server Error " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(intResponseMessage);
         }
     }
 }
