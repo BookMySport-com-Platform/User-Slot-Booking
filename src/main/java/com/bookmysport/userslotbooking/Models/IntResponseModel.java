@@ -9,4 +9,5 @@ import lombok.Data;
 public class IntResponseModel {
     private boolean success;
     private int number;
+    private String message;
 }
