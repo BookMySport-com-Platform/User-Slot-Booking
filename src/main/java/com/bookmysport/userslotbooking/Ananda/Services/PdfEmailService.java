@@ -97,7 +97,7 @@ public class PdfEmailService {
         helper.setText("Please find the attached PDF.");
 
         // Attach the PDF
-        helper.addAttachment("pdf_file.pdf", new ByteArrayResource(pdfContent));
+        helper.addAttachment("Booking_Info.pdf", new ByteArrayResource(pdfContent));
 
         // Send the email
         emailSender.send(message);
