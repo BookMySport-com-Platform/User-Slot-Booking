@@ -37,7 +37,7 @@ public class BookSlotService {
     private GetSportBySportIDAndSpid getSportBySportIDAndSpid;
 
     public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
-            UUID sportId, int courtNumber) {
+            UUID sportId, String courtNumber) {
         try {
             BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId, dateOfBooking, startTime,
                     stopTime, courtNumber);
@@ -84,8 +84,8 @@ public class BookSlotService {
                 int stopTimeMstartTime = bookSlotSPModelReq.getStopTime() - bookSlotSPModelReq.getStartTime();
 
                 ResponseEntity<IntResponseModel> price = getSportBySportIDAndSpid.getSportAndSpDetailsService(bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString());
-                
-                bookSlotSPModel.setPriceToBePaid(price.getBody().getNumber() * stopTimeMstartTime);
+
+                bookSlotSPModel.setPriceToBePaid(price.getBody().getNumber() * stopTimeMstartTime * bookSlotSPModelReq.getCourtNumber().split(",").length);
 
                 bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());
 

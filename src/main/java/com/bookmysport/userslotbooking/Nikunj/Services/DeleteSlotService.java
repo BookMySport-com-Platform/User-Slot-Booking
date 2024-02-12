@@ -28,7 +28,7 @@ public class DeleteSlotService {
 
     // This method is used to check the slot if it is present or not
 
-    public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,UUID sportId,int courtNumber) {
+    public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,UUID sportId,String courtNumber) {
         try {
             BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId,dateOfBooking, startTime, stopTime,courtNumber);
             if (userBooking == null) {
