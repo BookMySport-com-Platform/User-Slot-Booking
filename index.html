@@ -3,11 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Information</title>
+    <title>Booking Information Book My Sport</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 40px;
+        }
+ 
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            line-height: 24px;
+            color: #555;
+        }
+ 
+        .invoice-box .header,
+        .invoice-box .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+ 
+        .invoice-box img.logo {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+ 
+        .invoice-box .details,
+        .invoice-box .price-details {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+ 
+        .invoice-box .details .user-info,
+        .invoice-box .price-details .pricing {
+            flex-basis: 240%;
+        }
+ 
+        .invoice-box h2 {
+            color: #333;
+            font-size: 26px;
+        }
+ 
+        .invoice-box .footer p {
+            color: #999;
+            font-size: 14px;
+        }
+ 
+        .highlight {
+            color: #007bff;
+        }
+ 
+        /* Responsive */
+        @media (max-width: 600px) {
+            .invoice-box .details,
+            .invoice-box .price-details {
+                flex-direction: column;
+                margin-bottom: 10px;
+            }
+ 
+            .invoice-box .details .user-info,
+            .invoice-box .price-details .pricing {
+                flex-basis: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Your slot is booked</h1>
-    <h2>Name: $username$</h2>
-    <h2>Total Price: $totalPrice$</h2>
+    <div class="invoice-box">
+        <div class="header">
+            <!-- <img src="path/to/logo.png" alt="BookMySport Logo" class="logo"> -->
+            <h2>Invoice</h2>
+        </div>
+ 
+        <div class="details">
+            <div class="user-info">
+                <p>Invoice No: <span class="highlight">12345</span></p>
+                <p>Invoice Date: <span class="highlight">2024-02-12</span></p>
+                <p>Booked by: <span class="highlight">John Doe</span></p>
+                <p>Booking Date: <span class="highlight">2024-02-12</span></p>
+                <p>Playground Address: <span class="highlight">123 Main St, City</span></p>
+                <p>Start Time: <span class="highlight">10:00 AM</span></p>
+                <p>End Time: <span class="highlight">12:00 PM</span></p>
+                <p>Court Number: <span class="highlight">1</span></p>
+            </div>
+ 
+            <div class="price-details">
+                <div class="pricing">
+                    <h3>Price Details</h3>
+                    <p>Price per Hour: <span class="highlight">₹20.00</span></p>
+                    <p>Service Fee: <span class="highlight">₹5.00</span></p>
+                    <p>Total Price: <span class="highlight">₹25.00</span></p>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="footer">
+            <p>For any questions, contact us at support@bookmysport.com</p>
+        </div>
+    </div>
 </body>
 </html>
