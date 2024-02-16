@@ -23,4 +23,6 @@ public interface BookSlotRepo extends JpaRepository<BookSlotSPModel, UUID> {
 
     List<BookSlotSPModel> findByspId(UUID spId);
 
+    BookSlotSPModel findBySlotId(UUID slotId);
+
 }
