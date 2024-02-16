@@ -32,6 +32,7 @@ public class SlotReschedule {
                     .getBody().getSuccess()) {
 
                 BookSlotSPModel updateSlot = bookSlotRepo.findBySlotId(slotDetails.getSlotId());
+
                 updateSlot.setDateOfBooking(slotDetails.getDateOfBooking());
                 updateSlot.setStartTime(slotDetails.getStartTime());
                 updateSlot.setStopTime(slotDetails.getStopTime());
@@ -47,14 +48,19 @@ public class SlotReschedule {
                         * slotDetails.getCourtNumber().split(",").length;
 
                 if (calculatedPriceForUpdating > slotDetails.getPriceToBePaid()) {
+                    updateSlot.setPriceToBePaid(calculatedPriceForUpdating);
+                    bookSlotRepo.save(updateSlot);
                     amountMessage.setMessage("Amount to be paid");
                     amountMessage.setAmount(calculatedPriceForUpdating - slotDetails.getPriceToBePaid());
                     return ResponseEntity.ok().body(amountMessage);
                 } else if (calculatedPriceForUpdating < slotDetails.getPriceToBePaid()) {
+                    updateSlot.setPriceToBePaid(slotDetails.getPriceToBePaid() - calculatedPriceForUpdating);
+                    bookSlotRepo.save(updateSlot);
                     amountMessage.setMessage("Amount to be refunded by company");
                     amountMessage.setAmount(slotDetails.getPriceToBePaid() - calculatedPriceForUpdating);
                     return ResponseEntity.ok().body(amountMessage);
                 } else if (calculatedPriceForUpdating == slotDetails.getPriceToBePaid()) {
+                    bookSlotRepo.save(updateSlot);
                     amountMessage.setMessage("No amount to be charged");
                     amountMessage.setAmount(0);
                     return ResponseEntity.ok().body(amountMessage);
@@ -65,7 +71,7 @@ public class SlotReschedule {
                 }
 
             } else {
-                amountMessage.setMessage("Slot with id: " + slotDetails.getSlotId() + "does not exists");
+                amountMessage.setMessage("Slot with id: " + slotDetails.getSlotId() + " is booked");
                 amountMessage.setAmount(0);
                 return ResponseEntity.badRequest().body(amountMessage);
             }
