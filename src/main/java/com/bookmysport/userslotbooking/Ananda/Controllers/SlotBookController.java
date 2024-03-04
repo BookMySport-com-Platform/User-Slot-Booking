@@ -32,7 +32,7 @@ public class SlotBookController {
         return bookSlotService.userBookSLotService(bookSlotSPModel, token, role);
     }
 
-    @GetMapping("getslots")
+    @GetMapping("getslotsofuser")
     public ResponseEntity<Object> getUserSlots(@RequestHeader String token, @RequestHeader String role) {
         return bookSlotService.getSlotForAnUserService(token, role);
     }

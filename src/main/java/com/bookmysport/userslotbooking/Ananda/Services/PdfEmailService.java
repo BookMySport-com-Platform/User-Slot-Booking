@@ -33,9 +33,6 @@ public class PdfEmailService {
     @Value("${spring.mail.username}")
     private String sender;
 
-    @Value("${PATH_TO_INDEXHTML}")
-    private String path_to_indexhtml;
-
     @Autowired
     private JavaMailSender emailSender;
 
@@ -49,7 +46,7 @@ public class PdfEmailService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-            export(path_to_indexhtml, outputStream,token,role);
+            export(System.getenv("PATH_TO_INDEXHTML"), outputStream,token,role);
 
             sendEmailWithAttachment(recipientEmail, outputStream.toByteArray());
         } catch (Exception e) {

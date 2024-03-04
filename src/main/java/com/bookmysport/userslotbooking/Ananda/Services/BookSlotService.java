@@ -17,7 +17,6 @@ import com.bookmysport.userslotbooking.Models.IntResponseModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
 import com.bookmysport.userslotbooking.Repository.BookSlotRepo;
 
-
 @Service
 public class BookSlotService {
 
@@ -68,7 +67,7 @@ public class BookSlotService {
             if (messageFromCheckSlot.getBody().getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
-                Map<String, Object> userDetails=getSPDetailsMW.getSPDetailsByToken(token, role).getBody();
+                Map<String, Object> userDetails = getSPDetailsMW.getSPDetailsByToken(token, role).getBody();
                 bookSlotSPModel
                         .setUserId(UUID
                                 .fromString(userDetails.get("id").toString()));
@@ -83,15 +82,18 @@ public class BookSlotService {
 
                 int stopTimeMstartTime = bookSlotSPModelReq.getStopTime() - bookSlotSPModelReq.getStartTime();
 
-                ResponseEntity<IntResponseModel> price = getSportBySportIDAndSpid.getSportAndSpDetailsService(bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString());
+                ResponseEntity<IntResponseModel> price = getSportBySportIDAndSpid.getSportAndSpDetailsService(
+                        bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString());
 
-                bookSlotSPModel.setPriceToBePaid(price.getBody().getNumber() * stopTimeMstartTime * bookSlotSPModelReq.getCourtNumber().split(",").length);
+                bookSlotSPModel.setPriceToBePaid(price.getBody().getNumber() * stopTimeMstartTime
+                        * bookSlotSPModelReq.getCourtNumber().split(",").length);
 
                 bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());
 
                 bookSlotRepo.save(bookSlotSPModel);
 
-                pdfEmailService.generatePdfAndSendEmail(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("email").toString(),token,role);
+                pdfEmailService.generatePdfAndSendEmail(getSPDetailsMW.getSPDetailsByToken(token,
+                role).getBody().get("email").toString(),token,role);
 
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot booked.");
@@ -113,13 +115,9 @@ public class BookSlotService {
         try {
             List<BookSlotSPModel> slots = bookSlotRepo.findByUserId(
                     UUID.fromString(getSPDetailsMW.getSPDetailsByToken(token, role).getBody().get("id").toString()));
-            if (slots.isEmpty()) {
-                responseMessage.setSuccess(false);
-                responseMessage.setMessage("No Slots exits with this userId");
-                return ResponseEntity.badRequest().body(responseMessage);
-            } else {
-                return ResponseEntity.ok().body(slots);
-            }
+
+            return ResponseEntity.ok().body(slots);
+
         } catch (Exception e) {
             responseMessage.setSuccess(false);
             responseMessage.setMessage(
