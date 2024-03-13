@@ -43,6 +43,7 @@ public class BookSlotService {
             if (userBooking == null) {
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot Empty");
+                responseMessage.setUserDetails(null);
                 return ResponseEntity.ok().body(responseMessage);
             } else {
                 responseMessage.setSuccess(false);
@@ -93,7 +94,7 @@ public class BookSlotService {
                 bookSlotRepo.save(bookSlotSPModel);
 
                 pdfEmailService.generatePdfAndSendEmail(getSPDetailsMW.getSPDetailsByToken(token,
-                role).getBody().get("email").toString(),token,role);
+                        role).getBody().get("email").toString(), token, role);
 
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot booked.");
