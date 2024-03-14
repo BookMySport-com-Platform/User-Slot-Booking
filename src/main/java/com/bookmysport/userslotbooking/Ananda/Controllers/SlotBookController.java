@@ -43,7 +43,7 @@ public class SlotBookController {
         return slotReschedule.reScheduleSlotService(slotDetails);
     }
 
-    @GetMapping("checkslot")
+    @PostMapping("checkslot")
     public ResponseEntity<ResponseMessage> checkSlot(@RequestBody BookSlotSPModel slotToBeChecked)
     {
         return bookSlotService.checkSlot(slotToBeChecked.getSpId(), slotToBeChecked.getDateOfBooking(), slotToBeChecked.getStartTime(), slotToBeChecked.getStopTime(), slotToBeChecked.getSportId(), slotToBeChecked.getCourtNumber());

@@ -48,7 +48,7 @@ public class BookSlotService {
             } else {
                 responseMessage.setSuccess(false);
                 responseMessage.setMessage("Slot full.");
-                return ResponseEntity.badRequest().body(responseMessage);
+                return ResponseEntity.ok().body(responseMessage);
             }
         } catch (Exception e) {
             responseMessage.setSuccess(false);
