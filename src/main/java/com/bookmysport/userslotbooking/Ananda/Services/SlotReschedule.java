@@ -38,10 +38,10 @@ public class SlotReschedule {
                 updateSlot.setStopTime(slotDetails.getStopTime());
                 updateSlot.setCourtNumber(slotDetails.getCourtNumber());
 
-                int pricePerSportPerHour = getSportBySportIDAndSpid
+                int pricePerSportPerHour = (int) getSportBySportIDAndSpid
                         .getSportAndSpDetailsService(updateSlot.getSpId().toString(),
                                 updateSlot.getSportId().toString())
-                        .getBody().getNumber();
+                        .getBody().get("pricePerHour");
 
                 int calculatedPriceForUpdating = pricePerSportPerHour
                         * (slotDetails.getStopTime() - slotDetails.getStartTime())
