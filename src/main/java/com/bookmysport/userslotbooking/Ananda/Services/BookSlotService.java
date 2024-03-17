@@ -85,8 +85,6 @@ public class BookSlotService {
                 int price = (Integer) getSportBySportIDAndSpid.getSportAndSpDetailsService(
                         bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString()).getBody().get("message");
 
-                System.out.println(price);
-
                 bookSlotSPModel.setPriceToBePaid(price * stopTimeMstartTime
                         * bookSlotSPModelReq.getCourtNumber().split(",").length);
 
