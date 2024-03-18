@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.bookmysport.userslotbooking.MiddleWares.GetSPDetailsMW;
 import com.bookmysport.userslotbooking.MiddleWares.GetSportBySportIDAndSpid;
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
-import com.bookmysport.userslotbooking.Models.IntResponseModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
 import com.bookmysport.userslotbooking.Repository.BookSlotRepo;
 
@@ -83,10 +82,10 @@ public class BookSlotService {
 
                 int stopTimeMstartTime = bookSlotSPModelReq.getStopTime() - bookSlotSPModelReq.getStartTime();
 
-                ResponseEntity<IntResponseModel> price = getSportBySportIDAndSpid.getSportAndSpDetailsService(
-                        bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString());
+                int price = (Integer) getSportBySportIDAndSpid.getSportAndSpDetailsService(
+                        bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString()).getBody().get("message");
 
-                bookSlotSPModel.setPriceToBePaid(price.getBody().getNumber() * stopTimeMstartTime
+                bookSlotSPModel.setPriceToBePaid(price * stopTimeMstartTime
                         * bookSlotSPModelReq.getCourtNumber().split(",").length);
 
                 bookSlotSPModel.setCourtNumber(bookSlotSPModelReq.getCourtNumber());

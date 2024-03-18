@@ -38,28 +38,28 @@ public class SlotReschedule {
                 updateSlot.setStopTime(slotDetails.getStopTime());
                 updateSlot.setCourtNumber(slotDetails.getCourtNumber());
 
-                int pricePerSportPerHour = getSportBySportIDAndSpid
+                int pricePerSportPerHour = (Integer) getSportBySportIDAndSpid
                         .getSportAndSpDetailsService(updateSlot.getSpId().toString(),
                                 updateSlot.getSportId().toString())
-                        .getBody().getNumber();
+                        .getBody().get("message");
 
                 int calculatedPriceForUpdating = pricePerSportPerHour
                         * (slotDetails.getStopTime() - slotDetails.getStartTime())
                         * slotDetails.getCourtNumber().split(",").length;
 
-                if (calculatedPriceForUpdating > slotDetails.getPriceToBePaid()) {
+                if (calculatedPriceForUpdating > updateSlot.getPriceToBePaid()) {
+                    amountMessage.setMessage("Amount to be paid");
+                    amountMessage.setAmount(calculatedPriceForUpdating - updateSlot.getPriceToBePaid());
                     updateSlot.setPriceToBePaid(calculatedPriceForUpdating);
                     bookSlotRepo.save(updateSlot);
-                    amountMessage.setMessage("Amount to be paid");
-                    amountMessage.setAmount(calculatedPriceForUpdating - slotDetails.getPriceToBePaid());
                     return ResponseEntity.ok().body(amountMessage);
-                } else if (calculatedPriceForUpdating < slotDetails.getPriceToBePaid()) {
-                    updateSlot.setPriceToBePaid(slotDetails.getPriceToBePaid() - calculatedPriceForUpdating);
-                    bookSlotRepo.save(updateSlot);
+                } else if (calculatedPriceForUpdating < updateSlot.getPriceToBePaid()) {
                     amountMessage.setMessage("Amount to be refunded by company");
-                    amountMessage.setAmount(slotDetails.getPriceToBePaid() - calculatedPriceForUpdating);
+                    amountMessage.setAmount(updateSlot.getPriceToBePaid() - calculatedPriceForUpdating);
+                    updateSlot.setPriceToBePaid(calculatedPriceForUpdating);
+                    bookSlotRepo.save(updateSlot);
                     return ResponseEntity.ok().body(amountMessage);
-                } else if (calculatedPriceForUpdating == slotDetails.getPriceToBePaid()) {
+                } else if (calculatedPriceForUpdating == updateSlot.getPriceToBePaid()) {
                     bookSlotRepo.save(updateSlot);
                     amountMessage.setMessage("No amount to be charged");
                     amountMessage.setAmount(0);
