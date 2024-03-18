@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.bookmysport.userslotbooking.MiddleWares.GetSPDetailsMW;
+import com.bookmysport.userslotbooking.MiddleWares.GetSlotInfoFromCustomGames;
 import com.bookmysport.userslotbooking.MiddleWares.GetSportBySportIDAndSpid;
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
@@ -34,11 +35,15 @@ public class BookSlotService {
     @Autowired
     private GetSportBySportIDAndSpid getSportBySportIDAndSpid;
 
+    @Autowired
+    private GetSlotInfoFromCustomGames getSlotInfoFromCustomGames;
+
     public ResponseEntity<ResponseMessage> checkSlot(UUID spId, Date dateOfBooking, int startTime, int stopTime,
             UUID sportId, String courtNumber) {
         try {
             BookSlotSPModel userBooking = bookSlotRepo.findSlotExists(spId, sportId, dateOfBooking, startTime,
                     stopTime, courtNumber);
+
             if (userBooking == null) {
                 responseMessage.setSuccess(true);
                 responseMessage.setMessage("Slot Empty");
@@ -64,7 +69,9 @@ public class BookSlotService {
                     bookSlotSPModelReq.getDateOfBooking(), bookSlotSPModelReq.getStartTime(),
                     bookSlotSPModelReq.getStopTime(), bookSlotSPModelReq.getSportId(),
                     bookSlotSPModelReq.getCourtNumber());
-            if (messageFromCheckSlot.getBody().getSuccess()) {
+
+            if (messageFromCheckSlot.getBody().getSuccess() && getSlotInfoFromCustomGames.getSlotInfoFromCG(bookSlotSPModelReq).getBody()
+            .getSuccess()) {
                 BookSlotSPModel bookSlotSPModel = new BookSlotSPModel();
                 bookSlotSPModel.setSpId(bookSlotSPModelReq.getSpId());
                 Map<String, Object> userDetails = getSPDetailsMW.getSPDetailsByToken(token, role).getBody();
@@ -83,7 +90,8 @@ public class BookSlotService {
                 int stopTimeMstartTime = bookSlotSPModelReq.getStopTime() - bookSlotSPModelReq.getStartTime();
 
                 int price = (Integer) getSportBySportIDAndSpid.getSportAndSpDetailsService(
-                        bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString()).getBody().get("message");
+                        bookSlotSPModelReq.getSpId().toString(), bookSlotSPModelReq.getSportId().toString()).getBody()
+                        .get("message");
 
                 bookSlotSPModel.setPriceToBePaid(price * stopTimeMstartTime
                         * bookSlotSPModelReq.getCourtNumber().split(",").length);
