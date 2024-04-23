@@ -2,6 +2,7 @@ package com.bookmysport.userslotbooking.Ananda.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,9 +16,11 @@ import com.bookmysport.userslotbooking.Ananda.Services.SlotReschedule;
 import com.bookmysport.userslotbooking.Models.AmountMessage;
 import com.bookmysport.userslotbooking.Models.BookSlotSPModel;
 import com.bookmysport.userslotbooking.Models.ResponseMessage;
+import com.bookmysport.userslotbooking.Repository.BookSlotRepo;
 
 @RestController
 @RequestMapping("api")
+@CrossOrigin(origins = "http://localhost:5173")
 public class SlotBookController {
 
     @Autowired
@@ -25,6 +28,9 @@ public class SlotBookController {
 
     @Autowired
     private SlotReschedule slotReschedule;
+
+    @Autowired
+    private BookSlotRepo bookSlotRepo;
 
     @PostMapping("bookslot")
     public ResponseEntity<ResponseMessage> bookSlotByUser(@RequestBody BookSlotSPModel bookSlotSPModel,
@@ -38,15 +44,21 @@ public class SlotBookController {
     }
 
     @PutMapping("rescheduleslot")
-    public ResponseEntity<AmountMessage> reScheduleSlot(@RequestBody BookSlotSPModel slotDetails)
-    {
+    public ResponseEntity<AmountMessage> reScheduleSlot(@RequestBody BookSlotSPModel slotDetails) {
         return slotReschedule.reScheduleSlotService(slotDetails);
     }
 
     @PostMapping("checkslot")
-    public ResponseEntity<ResponseMessage> checkSlot(@RequestBody BookSlotSPModel slotToBeChecked)
-    {
-        return bookSlotService.checkSlot(slotToBeChecked.getSpId(), slotToBeChecked.getDateOfBooking(), slotToBeChecked.getStartTime(), slotToBeChecked.getStopTime(), slotToBeChecked.getSportId(), slotToBeChecked.getCourtNumber());
+    public ResponseEntity<ResponseMessage> checkSlot(@RequestBody BookSlotSPModel slotToBeChecked) {
+        return bookSlotService.checkSlot(slotToBeChecked.getSpId(), slotToBeChecked.getDateOfBooking(),
+                slotToBeChecked.getStartTime(), slotToBeChecked.getStopTime(), slotToBeChecked.getSportId(),
+                slotToBeChecked.getCourtNumber());
+    }
+
+    @PostMapping("getbookedslots")
+    public BookSlotSPModel getBookedSlots(@RequestBody BookSlotSPModel slotInfo) {
+        return bookSlotRepo.findBookedSlots(slotInfo.getSpId(), slotInfo.getSportId(), slotInfo.getDateOfBooking(),
+                slotInfo.getStartTime(), slotInfo.getStopTime());
     }
 
 }
