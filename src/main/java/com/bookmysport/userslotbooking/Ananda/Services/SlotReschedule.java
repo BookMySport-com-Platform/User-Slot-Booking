@@ -47,14 +47,15 @@ public class SlotReschedule {
                         * (slotDetails.getStopTime() - slotDetails.getStartTime())
                         * slotDetails.getCourtNumber().split(",").length;
 
+                amountMessage.setSuccess(true);
                 if (calculatedPriceForUpdating > updateSlot.getPriceToBePaid()) {
-                    amountMessage.setMessage("Amount to be paid");
+                    amountMessage.setMessage("Amount to be paid ₹" + (calculatedPriceForUpdating - updateSlot.getPriceToBePaid()));
                     amountMessage.setAmount(calculatedPriceForUpdating - updateSlot.getPriceToBePaid());
                     updateSlot.setPriceToBePaid(calculatedPriceForUpdating);
                     bookSlotRepo.save(updateSlot);
                     return ResponseEntity.ok().body(amountMessage);
                 } else if (calculatedPriceForUpdating < updateSlot.getPriceToBePaid()) {
-                    amountMessage.setMessage("Amount to be refunded by company");
+                    amountMessage.setMessage("Amount to be refunded by company ₹" + (updateSlot.getPriceToBePaid() - calculatedPriceForUpdating));
                     amountMessage.setAmount(updateSlot.getPriceToBePaid() - calculatedPriceForUpdating);
                     updateSlot.setPriceToBePaid(calculatedPriceForUpdating);
                     bookSlotRepo.save(updateSlot);
@@ -71,11 +72,13 @@ public class SlotReschedule {
                 }
 
             } else {
+                amountMessage.setSuccess(false);
                 amountMessage.setMessage("Slot with id: " + slotDetails.getSlotId() + " is booked");
                 amountMessage.setAmount(0);
                 return ResponseEntity.badRequest().body(amountMessage);
             }
         } catch (Exception e) {
+            amountMessage.setSuccess(false);
             amountMessage.setMessage("Internal Server Error in SlotReSchedule.java. Reaso: " + e.getMessage());
             amountMessage.setAmount(0);
             return ResponseEntity.ok().body(amountMessage);
