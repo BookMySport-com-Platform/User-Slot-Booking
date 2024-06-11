@@ -33,6 +33,7 @@ public class SlotBookController {
     @PostMapping("bookslot")
     public ResponseEntity<ResponseMessage> bookSlotByUser(@RequestBody BookSlotSPModel bookSlotSPModel,
             @RequestHeader String token, @RequestHeader String role) {
+        System.out.println(bookSlotSPModel);
         return bookSlotService.userBookSLotService(bookSlotSPModel, token, role);
     }
 
